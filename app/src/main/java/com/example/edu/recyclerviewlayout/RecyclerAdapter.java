@@ -1,5 +1,7 @@
 package com.example.edu.recyclerviewlayout;
 
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.RecyclerView;
@@ -13,17 +15,47 @@ import android.widget.Toast;
 
 import org.w3c.dom.Text;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Currency;
+import java.util.Date;
 import java.util.HashMap;
 
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.MyViewHolder> {
 
     ArrayList<HashMap<String, Object>> arrayList = null;
+    private SQLiteDatabase mdb;
+    int i =0;
+
+//    public RecyclerAdapter(ArrayList<HashMap<String, Object>> arrayList) {
+//        this.arrayList = new ArrayList<HashMap<String, Object>>();
+//        this.arrayList = arrayList;
+//    }
+
+    public RecyclerAdapter(SQLiteDatabase db) {
+        this.mdb=db;
+        String query=new StringBuilder().append("select * from myorder").toString();
+        Cursor cursor=mdb.rawQuery(query, null);
+        ArrayList<HashMap<String, Object>> arrayListTemp = new ArrayList<>();
+        HashMap<String, Object> hashMap=null;
+        while (cursor.moveToNext()){
+
+            int[] image={R.drawable.android_image_1,R.drawable.android_image_2,R.drawable.android_image_3,R.drawable.android_image_4,
+                    R.drawable.android_image_5,R.drawable.android_image_6,R.drawable.android_image_7,R.drawable.android_image_8};
+
+           // for(int i=0; i<8; i++) {
+                String J= String.valueOf(i);
+                hashMap=new HashMap<String, Object>();
+                hashMap.put("title", cursor.getString(0));
+                hashMap.put("detail", cursor.getString(1));
+                hashMap.put("image", image[i]);
+                arrayListTemp.add(hashMap);
+                i++;
+           // }
 
 
-    public RecyclerAdapter(ArrayList<HashMap<String, Object>> arrayList) {
-        this.arrayList = new ArrayList<HashMap<String, Object>>();
-        this.arrayList = arrayList;
+        }
+        this.arrayList=arrayListTemp;
     }
 
     public  void addItem(int position, HashMap<String,Object> hashMap){
@@ -39,7 +71,6 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.MyView
         MyViewHolder viewHolder = new MyViewHolder(view);
 
         return viewHolder;
-
     }
 
     @Override
@@ -62,7 +93,6 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.MyView
                 //Toast.makeText(this, v.getText, Toast.LENGTH_SHORT).show();
                 Integer count = Integer.parseInt(((TextView)holder.item_title).getText().toString()) + 1;
                 ((TextView) holder.item_title).setText(count.toString());
-
             }
         });
     }
